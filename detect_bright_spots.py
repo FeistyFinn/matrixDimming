@@ -1,3 +1,6 @@
+# USAGE
+# python detect_bright_spots.py --image images/lights_01.png
+
 # import the necessary packages
 from imutils import contours
 from skimage import measure
@@ -7,10 +10,9 @@ import imutils
 import cv2
 
 # construct the argument parse and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "/Users/alexye/Downloads/multi_bright_regions_input_01.jpg", required=True,
-	help="path to the image file")
-args = vars(ap.parse_args())
+args = {
+	"image": "/Users/alexye/Downloads/multi_bright_regions_input_01.jpg"
+}
 
 # load the image, convert it to grayscale, and blur it
 image = cv2.imread(args["image"])
@@ -31,16 +33,19 @@ thresh = cv2.dilate(thresh, None, iterations=4)
 # components
 labels = measure.label(thresh, background=0, connectivity=1)
 mask = np.zeros(thresh.shape, dtype="uint8")
+
 # loop over the unique components
 for label in np.unique(labels):
 	# if this is the background label, ignore it
 	if label == 0:
 		continue
+
 	# otherwise, construct the label mask and count the
-	# number of pixels
+	# number of pixels 
 	labelMask = np.zeros(thresh.shape, dtype="uint8")
 	labelMask[labels == label] = 255
 	numPixels = cv2.countNonZero(labelMask)
+
 	# if the number of pixels in the component is sufficiently
 	# large, then add it to our mask of "large blobs"
 	if numPixels > 300:
@@ -52,6 +57,7 @@ cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 	cv2.CHAIN_APPROX_SIMPLE)
 cnts = imutils.grab_contours(cnts)
 cnts = contours.sort_contours(cnts)[0]
+
 # loop over the contours
 for (i, c) in enumerate(cnts):
 	# draw the bright spot on the image
@@ -61,6 +67,7 @@ for (i, c) in enumerate(cnts):
 		(0, 0, 255), 3)
 	cv2.putText(image, "#{}".format(i + 1), (x, y - 15),
 		cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+
 # show the output image
 cv2.imshow("Image", image)
 cv2.waitKey(0)
