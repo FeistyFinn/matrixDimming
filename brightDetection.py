@@ -7,13 +7,9 @@ import imutils
 import cv2
 
 # construct the argument parse and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "/Users/alexye/Downloads/multi_bright_regions_input_01.jpg", required=True,
-	help="path to the image file")
-args = vars(ap.parse_args())
 
 # load the image, convert it to grayscale, and blur it
-image = cv2.imread(args["image"])
+image = cv2.imread("/Users/alexye/Downloads/multi_bright_regions_input_01.jpg")
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 blurred = cv2.GaussianBlur(gray, (11, 11), 0)
 
@@ -58,7 +54,7 @@ for (i, c) in enumerate(cnts):
 	(x, y, w, h) = cv2.boundingRect(c)
 	((cX, cY), radius) = cv2.minEnclosingCircle(c)
 	cv2.circle(image, (int(cX), int(cY)), int(radius),
-		(0, 0, 255), 3)
+		(0, 255, 0), 3)
 	cv2.putText(image, "#{}".format(i + 1), (x, y - 15),
 		cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
 # show the output image
