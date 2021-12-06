@@ -3,10 +3,9 @@
 
 # import the necessary packages
 from imutils import contours
-from imutils.video import VideoStream
 from skimage import measure
-#from picamera.array import PiRGBArray
-#from picamera import PiCamera
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import time
 import numpy as np
 import imutils
@@ -14,15 +13,15 @@ import cv2
 
 
 # construct the argument parse and parse the arguments
-
+camera = PiCamera()
+camera.resolution = (1280, 720)
+camera.framerate = 32
+rawCapture = PiRGBArray(camera, size=(1280, 720))
 # start the video stream and wait for the camera to warm up
-vs = VideoStream(usePiCamera=True).start()
-time.sleep(2.0)
-
-while True:
-
+time.sleep(0.1)
+for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 	# load the image, convert it to grayscale, and blur it
-	image = vs.read()
+	image = frame.array
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	blurred = cv2.GaussianBlur(gray, (11, 11), 0)
 
@@ -38,7 +37,7 @@ while True:
 	# perform a connected component analysis on the thresholded
 	# image, then initialize a mask to store only the "large"
 	# components
-	labels = measure.label(thresh, background=0, connectivity=1)
+	labels = measure.label(thresh, neighbors=8, background=0)
 	mask = np.zeros(thresh.shape, dtype="uint8")
 
 	# loop over the unique components
@@ -78,3 +77,4 @@ while True:
 	# show the output image
 	cv2.imshow("Image", image)
 	cv2.waitKey(1)
+	rawCapture.truncate(0)
