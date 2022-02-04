@@ -20,7 +20,7 @@ while True:
 
     # threshold the image to reveal light regions in the
     # blurred image
-    thresh = cv2.threshold(blurred, 250, 255, cv2.THRESH_BINARY)[1]
+    thresh = cv2.threshold(blurred, 245, 255, cv2.THRESH_BINARY)[1]
 
     # perform a series of erosions and dilations to remove
     # any small blobs of noise from the thresholded image
@@ -59,7 +59,7 @@ while True:
         (x, y, w, h) = cv2.boundingRect(c)
         ((cX, cY), radius) = cv2.minEnclosingCircle(c)
         #cv2.circle(image, (int(cX), int(cY)), int(radius),(0, 255, 0), 3)
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 0), 500)
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 0), 200)
         cv2.putText(image, "#{}".format(i + 1), (x, y - 15),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
     # show the output image
